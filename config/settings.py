@@ -46,6 +46,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+LOGIN_URL = 'login_page'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap4', 'bootstrap5', 'tailwind')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTH_USER_MODEL = 'users.User'
+
 
 TEMPLATES = [
     {
