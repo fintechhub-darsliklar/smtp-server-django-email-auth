@@ -10,14 +10,39 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
 from datetime import timedelta
-from users.utils import send_verification_email, send_verification_email_forget_password
+
 
 # ------------- Home page --------------
 
 
+def send_verification_email(user, token, request):
+    domain = request.get_host()
+    protocol = 'https' if request.is_secure() else 'http'
+    verify_url = f"{protocol}://{domain}/verify/?token={token}"
+
+    subject = 'Email manzilingizni tasdiqlang'
+    
+    context = {
+        'user': user,
+        'verify_url': verify_url,
+    }
+    
+    html_content = render_to_string('verifi-token.html', context)
+    text_content = strip_tags(html_content)
+
+    msg = EmailMultiAlternatives(
+        subject,
+        text_content,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email]
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
 @login_required
 def home_page(request):
-    domain = request.get_host()
+    return render(request, 'home.html')
+
 
 # ------------- Auth page --------------
 
@@ -93,6 +118,7 @@ def register_page(request):
 
 # ------------- Verification account --------------
 
+
 def send_link_mail(request):
     return render(request, "verifi-token-send.html")
 
@@ -131,6 +157,31 @@ def resend_mail(request, token):
 
 
 # ------------- Forget password --------------
+
+
+def send_verification_email_forget_password(user, token, request):
+    domain = request.get_host()
+    protocol = 'https' if request.is_secure() else 'http'
+    verify_url = f"{protocol}://{domain}/forget-password-verify/?token={token}"
+
+    subject = 'Parolni qayta tiklash'
+    
+    context = {
+        'user': user,
+        'forget_password_verify_url': verify_url,
+    }
+    
+    html_content = render_to_string('forget-password/mail-send.html', context)
+    text_content = strip_tags(html_content)
+
+    msg = EmailMultiAlternatives(
+        subject,
+        text_content,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email]
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def forget_password_page(request):
 
