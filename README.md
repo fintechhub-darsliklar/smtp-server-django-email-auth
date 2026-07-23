@@ -92,6 +92,19 @@ EMAIL_HOST_USER=sizning-emailingiz@gmail.com
 EMAIL_HOST_PASSWORD=gmail-app-parol
 ```
 
+### SMTP provayderini o'zgartirish
+
+`.env` faylidagi `EMAIL_HOST` / `EMAIL_PORT` / `EMAIL_USE_TLS` / `EMAIL_USE_SSL` orqali boshqariladi. Standart holatda Gmail ishlatiladi:
+
+```
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=1
+EMAIL_USE_SSL=0
+```
+
+> **Eslatma (PythonAnywhere bepul tarif):** PythonAnywhere bepul hisoblarda faqat whitelist qilingan xizmatlarga tashqi ulanishga ruxsat beradi. Gmail SMTP uchun alohida firewall istisnosi bor, lekin Google IP-manzillarini tez-tez almashtirgani uchun ba'zida vaqtincha "Network is unreachable" xatosi berishi mumkin. Buni butunlay bartaraf etish uchun PythonAnywhere'ning doimiy whitelist qilingan provayderlaridan biriga (masalan **SendGrid**, **Mailgun**, **Mailjet**, **SMTP2GO**, **Zoho**) o'ting — shunchaki yuqoridagi `EMAIL_HOST`/`EMAIL_PORT`/`EMAIL_HOST_USER`/`EMAIL_HOST_PASSWORD`ni o'sha provayderning ma'lumotlariga almashtiring, kodga tegish shart emas.
+
 ### Baza tanlash: SQLite yoki PostgreSQL
 
 `.env` faylidagi `DB_ENGINE` orqali boshqariladi.
