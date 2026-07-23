@@ -107,7 +107,7 @@ def register_page(request):
                         user=user
                     )
                     send_verification_email(user, verifi.token, request)
-                    return redirect("send_link_mail")
+                    return render(request, "verifi-token-send.html", context={"token":verifi.token})
 
     context = {
         "form": RegisterForm(),
@@ -117,10 +117,6 @@ def register_page(request):
 
 
 # ------------- Verification account --------------
-
-
-def send_link_mail(request):
-    return render(request, "verifi-token-send.html")
 
 def verifi_account_page(request):
     token = request.GET.get('token')
@@ -151,7 +147,8 @@ def resend_mail(request, token):
                 user=token.user
             )
             send_verification_email(token.user, new_token.token, request)
-            return redirect("send_link_mail")
+            return render(request, "verifi-token-send.html", context={"token": token.token})
+
         return render(request, 'verifi-token-active.html', context={"user_token": token.token})
     return redirect('login_page')
 
