@@ -23,7 +23,7 @@ smtp-server-django-email-auth/
 │   └── wsgi.py
 │
 ├── users/                      # asosiy ilova — auth va email tasdiqlash logikasi
-│   ├── models.py                # CustomUser (email bilan login) + VerificationsLink (token, 5 daqiqa amal qiladi)
+│   ├── models.py                # CustomUser + VerificationsLink (5 daq) + ActionToken (email o'zgartirish/hisob o'chirish, 15 daq)
 │   ├── forms.py
 │   ├── views.py
 │   ├── urls.py
@@ -32,6 +32,7 @@ smtp-server-django-email-auth/
 │
 ├── templates/                  # HTML shablonlar
 │   ├── home.html
+│   ├── profile.html             # profil tahrirlash, parol/email o'zgartirish, hisobni o'chirish
 │   ├── login.html
 │   ├── register.html
 │   ├── verifi-token.html
@@ -39,11 +40,20 @@ smtp-server-django-email-auth/
 │   ├── verifi-token-confirm.html
 │   ├── verifi-token-active.html
 │   ├── verifi-resend.html
-│   └── forget-password/
-│       ├── forget-password.html
-│       ├── verifi-token-send.html
+│   ├── forget-password/
+│   │   ├── forget-password.html
+│   │   ├── verifi-token-send.html
+│   │   ├── mail-send.html
+│   │   └── password-new.html
+│   ├── change-email/            # yangi emailni tasdiqlash oqimi
+│   │   ├── mail-send.html
+│   │   ├── email-confirmed.html
+│   │   ├── email-taken.html
+│   │   └── link-expired.html
+│   └── account-delete/          # hisobni o'chirishni tasdiqlash oqimi
 │       ├── mail-send.html
-│       └── password-new.html
+│       ├── account-deleted.html
+│       └── link-expired.html
 │
 ├── images/                      # loyiha skrinshotlari (quyida)
 ├── manage.py
@@ -54,22 +64,28 @@ smtp-server-django-email-auth/
 
 ## URL marshrutlari
 
+Havolalar jonli demo saytga (`https://rezxutewziyodev.pythonanywhere.com`) ishora qiladi.
+
 | Yo'l | Tavsif |
 |---|---|
-| `/` | Bosh sahifa |
-| `/login/` | Tizimga kirish |
-| `/logout/` | Tizimdan chiqish |
-| `/register/` | Ro'yxatdan o'tish |
-| `/verify/` | Email tasdiqlash |
+| [`/`](https://rezxutewziyodev.pythonanywhere.com/) | Bosh sahifa |
+| [`/login/`](https://rezxutewziyodev.pythonanywhere.com/login/) | Tizimga kirish |
+| [`/logout/`](https://rezxutewziyodev.pythonanywhere.com/logout/) | Tizimdan chiqish |
+| [`/register/`](https://rezxutewziyodev.pythonanywhere.com/register/) | Ro'yxatdan o'tish |
+| [`/verify/`](https://rezxutewziyodev.pythonanywhere.com/verify/) | Email tasdiqlash |
 | `/resend-mail/<token>/` | Tasdiqlash xatini qayta yuborish |
-| `/forget-password/` | Parolni unutdingizmi |
+| [`/forget-password/`](https://rezxutewziyodev.pythonanywhere.com/forget-password/) | Parolni unutdingizmi |
 | `/forget-password-verify/` | Parol tiklash kodini tasdiqlash |
-| `/forget-password-send/` | Parol tiklash xatini yuborish |
+| [`/forget-password-send/`](https://rezxutewziyodev.pythonanywhere.com/forget-password-send/) | Parol tiklash xatini yuborish |
+| [`/profile/`](https://rezxutewziyodev.pythonanywhere.com/profile/) | Profil — ism/familya/tug'ilgan sana tahrirlash, parol/email o'zgartirish, hisobni o'chirish |
+| `/confirm-email-change/` | Yangi emailni tasdiqlash havolasi (email orqali yuboriladi) |
+| `/confirm-account-delete/` | Hisobni o'chirishni tasdiqlash havolasi (email orqali yuboriladi) |
 
 ## Ma'lumotlar modeli
 
-- **User** — `AbstractUser`dan meros olgan, `username` o'rniga `email` orqali login qiladi (`CustomUserManager`).
-- **VerificationsLink** — foydalanuvchiga bog'langan bir martalik `token` (UUID), yaratilgandan keyin **5 daqiqa** amal qiladi.
+- **User** — `AbstractUser`dan meros olgan, `username` o'rniga `email` orqali login qiladi (`CustomUserManager`), `birth_date` maydoni bilan.
+- **VerificationsLink** — ro'yxatdan o'tish/parol tiklash uchun bir martalik `token` (UUID), yaratilgandan keyin **5 daqiqa** amal qiladi.
+- **ActionToken** — email o'zgartirish va hisobni o'chirishni tasdiqlash uchun bir martalik `token` (`purpose`: `email_change` yoki `account_delete`, ixtiyoriy `new_email`), **15 daqiqa** amal qiladi.
 
 ## O'rnatish va ishga tushirish
 
