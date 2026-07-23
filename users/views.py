@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils import timezone
 from datetime import timedelta, datetime
+import smtplib
 
 
 # ------------- Home page --------------
@@ -37,7 +38,11 @@ def send_verification_email(user, token, request):
         [user.email]
     )
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+        return True
+    except (OSError, smtplib.SMTPException):
+        return False
 
 @login_required
 def home_page(request):
@@ -69,7 +74,11 @@ def send_email_change_confirmation(user, new_email, token, request):
         [new_email]
     )
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+        return True
+    except (OSError, smtplib.SMTPException):
+        return False
 
 
 def send_account_delete_confirmation(user, token, request):
@@ -94,7 +103,11 @@ def send_account_delete_confirmation(user, token, request):
         [user.email]
     )
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+        return True
+    except (OSError, smtplib.SMTPException):
+        return False
 
 
 @login_required
@@ -153,16 +166,22 @@ def profile_page(request):
                     purpose=ActionToken.Purpose.EMAIL_CHANGE,
                     new_email=new_email,
                 )
-                send_email_change_confirmation(request.user, new_email, action_token.token, request)
-                success = f"Tasdiqlash havolasi {new_email} manziliga yuborildi. Emailingizni tekshiring!"
+                if send_email_change_confirmation(request.user, new_email, action_token.token, request):
+                    success = f"Tasdiqlash havolasi {new_email} manziliga yuborildi. Emailingizni tekshiring!"
+                else:
+                    action_token.delete()
+                    error = "Email yuborib bo'lmadi. Birozdan so'ng qayta urinib ko'ring."
 
         elif action == "delete_account":
             action_token = ActionToken.objects.create(
                 user=request.user,
                 purpose=ActionToken.Purpose.ACCOUNT_DELETE,
             )
-            send_account_delete_confirmation(request.user, action_token.token, request)
-            success = "Hisobni o'chirishni tasdiqlash havolasi emailingizga yuborildi!"
+            if send_account_delete_confirmation(request.user, action_token.token, request):
+                success = "Hisobni o'chirishni tasdiqlash havolasi emailingizga yuborildi!"
+            else:
+                action_token.delete()
+                error = "Email yuborib bo'lmadi. Birozdan so'ng qayta urinib ko'ring."
 
     context = {
         "error": error,
@@ -348,7 +367,11 @@ def send_verification_email_forget_password(user, token, request):
         [user.email]
     )
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    try:
+        msg.send()
+        return True
+    except (OSError, smtplib.SMTPException):
+        return False
 
 def forget_password_page(request):
 
