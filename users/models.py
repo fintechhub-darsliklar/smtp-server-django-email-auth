@@ -38,6 +38,7 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
+    birth_date = models.DateField(null=True, blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
@@ -58,6 +59,27 @@ class VerificationsLink(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.expired_at = timezone.now() + timedelta(minutes=5)
+        super().save(*args, **kwargs)
+
+
+class ActionToken(models.Model):
+    class Purpose(models.TextChoices):
+        EMAIL_CHANGE = "email_change", "Email o'zgartirish"
+        ACCOUNT_DELETE = "account_delete", "Hisobni o'chirish"
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    purpose = models.CharField(max_length=20, choices=Purpose.choices)
+    new_email = models.EmailField(blank=True, null=True)
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    expired_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} | {self.purpose} | {self.expired_at}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.expired_at = timezone.now() + timedelta(minutes=15)
         super().save(*args, **kwargs)
 
 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-white to-blue-50 min-h-screen font-sans text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'home_page' %}" class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
+                        <i class="fa-solid fa-house text-lg"></i>
+                    </a>
+                    <span class="font-bold text-xl text-gray-900 tracking-tight">Profil</span>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-gray-600 hidden sm:inline">
+                        Xush kelibsiz, <strong class="text-indigo-600">{{ user.first_name|default:user.username }}</strong>
+                    </span>
+                    <a href="{% url 'logout_page' %}" class="inline-flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span>Chiqish</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        {% if success %}
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+            <i class="fa-solid fa-circle-check mr-1"></i> {{ success }}
+        </div>
+        {% endif %}
+        {% if error %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Profil ma'lumotlarini tahrirlash -->
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h2 class="font-bold text-lg text-gray-900">Profil ma'lumotlari</h2>
+            </div>
+
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ism</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Familya</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}"
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tug'ilgan sana</label>
+                    <input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" value="{{ user.email }}" disabled
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 outline-none">
+                </div>
+
+                <button type="submit"
+                    class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Saqlash</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Parolni o'zgartirish -->
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="font-bold text-lg text-gray-900">Parolni o'zgartirish</h2>
+            </div>
+
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_password">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Joriy parol</label>
+                    <input type="password" name="old_password" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Yangi parol</label>
+                    <input type="password" name="new_password1" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Yangi parol (qayta)</label>
+                    <input type="password" name="new_password2" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+                </div>
+
+                <button type="submit"
+                    class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Parolni yangilash</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Emailni o'zgartirish -->
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                </div>
+                <h2 class="font-bold text-lg text-gray-900">Emailni o'zgartirish</h2>
+            </div>
+
+            <p class="text-sm text-gray-500 mb-5">Joriy email: <strong>{{ user.email }}</strong>. Yangi email kiritilgach, uni tasdiqlash uchun havola yuboriladi.</p>
+
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="change_email">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Yangi email</label>
+                    <input type="email" name="new_email" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition">
+                </div>
+
+                <button type="submit"
+                    class="inline-flex items-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Tasdiqlash havolasini yuborish</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Hisobni o'chirish -->
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-red-100">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h2 class="font-bold text-lg text-gray-900">Hisobni o'chirish</h2>
+            </div>
+
+            <p class="text-sm text-gray-500 mb-5">Hisobingizni o'chirish qaytarib bo'lmaydigan amal. Tasdiqlash havolasi emailingizga yuboriladi va faqat siz havolani bossangiz hisobingiz o'chadi.</p>
+
+            <form method="post" onsubmit="return confirm('Rostdan ham hisobingizni butunlay o\'chirmoqchimisiz?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_account">
+
+                <button type="submit"
+                    class="inline-flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Hisobni o'chirish</span>
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+</body>
+</html>

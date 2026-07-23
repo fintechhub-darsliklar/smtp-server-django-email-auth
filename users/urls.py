@@ -1,13 +1,17 @@
 from django.urls import path
 from users.views import home_page, login_page, \
     register_page, verifi_account_page, \
-    resend_mail, logout_page, \
+    resend_mail, logout_page, profile_page, \
+    confirm_email_change_page, confirm_account_delete_page, \
     forget_password_page, forget_password_verifi_page, \
     forget_password_send_page
 
 
 urlpatterns = [
     path("", home_page, name="home_page"),
+    path("profile/", profile_page, name="profile_page"),
+    path("confirm-email-change/", confirm_email_change_page, name="confirm_email_change_page"),
+    path("confirm-account-delete/", confirm_account_delete_page, name="confirm_account_delete_page"),
     path("login/", login_page, name="login_page"),
     path("logout/", logout_page, name="logout_page"),
     path("register/", register_page, name="register_page"),
