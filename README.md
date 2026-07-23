@@ -138,9 +138,15 @@ python manage.py runserver
 
 ## Skrinshotlar
 
+Loyihani jonli ko'rish: **https://rezxutewziyodev.pythonanywhere.com**
+
 **Bosh sahifa**
 
 ![Home page](images/home-page.png)
+
+**Profilni tahrirlash**
+
+![Profile edit page](images/profile-edit-page.png)
 
 **Ro'yxatdan o'tish**
 
