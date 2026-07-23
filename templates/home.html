@@ -6,6 +6,8 @@
     <title>Asosiy sahifa</title>
 </head>
 <body>
-    <h1>Asosiy sahifa</h1>
+    <h1>Asosiy sahifa {{user.first_name}}</h1>
+
+    <a href="{% url 'logout_page' %}"> Tizimdan chiqish </a>
 </body>
 </html>

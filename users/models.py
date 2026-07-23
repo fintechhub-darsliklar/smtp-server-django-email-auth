@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
+import uuid
+from django.utils import timezone
+from datetime import timedelta
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -40,3 +44,27 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name}"
+
+
+class VerificationsLink(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    expired_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} | {self.expired_at}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.expired_at = timezone.now() + timedelta(minutes=5)
+        super().save(*args, **kwargs)
+
+
+"""
+
+user
+key
+expired_at
+
+"""
