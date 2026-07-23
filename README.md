@@ -9,7 +9,7 @@ Django asosida qurilgan, email orqali tasdiqlash (verification) va parolni tikla
 - Python / Django 6.0.7
 - django-environ — `.env` orqali sozlamalarni boshqarish
 - django-crispy-forms + crispy-bootstrap4 — forma dizayni
-- SQLite (`db.sqlite3`)
+- SQLite yoki PostgreSQL — `.env`dagi `DB_ENGINE` orqali tanlanadi
 - SMTP (email yuborish)
 
 ## Loyiha strukturasi
@@ -91,6 +91,29 @@ CSRF_TRUSTED_ORIGINS=https://localhost:3000
 EMAIL_HOST_USER=sizning-emailingiz@gmail.com
 EMAIL_HOST_PASSWORD=gmail-app-parol
 ```
+
+### Baza tanlash: SQLite yoki PostgreSQL
+
+`.env` faylidagi `DB_ENGINE` orqali boshqariladi.
+
+**SQLite (standart, qo'shimcha sozlash shart emas):**
+
+```
+DB_ENGINE=sqlite3
+```
+
+**PostgreSQL:**
+
+```
+DB_ENGINE=postgresql
+POSTGRES_DB=mydatabase
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypassword
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+```
+
+`DB_ENGINE=postgresql` bo'lganda `psycopg2-binary` paketi (`requirements.txt`da bor) PostgreSQL'ga ulanish uchun ishlatiladi.
 
 Bazani tayyorlash va serverni ishga tushirish:
 
